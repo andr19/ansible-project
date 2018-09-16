@@ -1,0 +1,232 @@
+---
+# tasks file for LEMP_configure
+
+- name: Copy wordpress.default.site.zip to WEB-SRV
+  copy:
+        src: wordpress.default.site.zip
+        dest: /usr/share/nginx/{{ nginx_sitename_subdomain_1 }}/
+        owner: nginx
+        group: nginx
+        mode: u=rw,g=rw,o=r
+
+
+- name: Unarchive wordpress files
+  unarchive:
+        src: /usr/share/nginx/{{ nginx_sitename_subdomain_1 }}/wordpress.default.site.zip
+        dest: /usr/share/nginx/{{ nginx_sitename_subdomain_1 }}
+        remote_src: yes
+
+
+- name: Copy joomla.default.site.zip to WEB-SRV
+  copy:
+        src: joomla.default.site.zip
+        dest: /usr/share/nginx/{{ nginx_sitename_subdomain_4 }}/
+        owner: nginx
+        group: nginx
+        mode: 0777
+
+
+- name: Unarchive joomla files
+  unarchive:
+        src: /usr/share/nginx/{{ nginx_sitename_subdomain_4 }}/joomla.default.site.zip
+        dest: /usr/share/nginx/{{ nginx_sitename_subdomain_4 }}
+        mode: 0777
+        remote_src: yes
+ 
+
+- name: Delete temp file wp
+  file: 
+        path: /usr/share/nginx/{{ nginx_sitename_subdomain_1 }}/wordpress.default.site.zip
+        state: absent
+
+
+- name: Delete temp file joomla
+  file: 
+        path: /usr/share/nginx/{{ nginx_sitename_subdomain_4 }}/joomla.default.site.zip
+        state: absent
+
+
+- name: Copy wp-config.php.j2
+  template: 
+        src: wp-config.php.j2 
+        dest: /usr/share/nginx/{{ nginx_sitename_subdomain_1 }}/wp-config.php
+        owner: nginx
+        group: nginx
+        mode: u=rw,g=rw,o=r
+
+#########################################################################################################################################
+#- name: Copy configuration.php.joomla.j2 
+#  template: 
+#        src: configuration.php.joomla.j2 
+#        dest: /usr/share/nginx/{{ nginx_sitename_subdomain_4 }}/configuration.php
+#        owner: nginx
+#        group: nginx
+#        mode: u=rw,g=rw,o=r
+
+##############################################################################################################################################
+
+- name: Copy generate script to mariaDB secure install
+  template:
+        src: mariadb_sec_install.sh.j2
+        dest: /etc/mariadb_sec_install.sh
+        owner: root
+        group: root
+        mode: u=rwx,g=rwx,o=r
+
+
+# mariadb configure
+- name: Run script to mariaDB secure install
+  shell: /etc/mariadb_sec_install.sh
+ 
+
+- name: Run script to mariaDB secure install
+  shell: /etc/mariadb_sec_install.sh
+ 
+
+- name: Copy generate script to configure mariaDB
+  template: 
+        src: sql_cfg.sh.j2 
+        dest: /etc/sql_cfg.sh
+        owner: root
+        group: root
+        mode: u=rwx,g=rwx,o=r
+ 
+
+- name: Run script to create database and user_db
+  shell: /etc/sql_cfg.sh
+  notify: Restart mariaDB service
+
+
+- name: Delete mariadb_sec_install.sh
+  file:
+        path: /etc/mariadb_sec_install.sh
+        state: absent
+
+
+- name: Delete sql_cfg.sh
+  file:
+        path: /etc/sql_cfg.sh
+        state: absent
+
+# PHP
+- name: Copy /etc/php.ini
+  copy:
+         src: php.ini
+         dest: /etc/php.ini
+         owner: root
+         group: root
+         mode: u=rw,g=r,o=r
+
+
+- name: Copy /etc/php-fpm.d/www.conf
+  copy:
+         src: www.conf
+         dest: /etc/php-fpm.d/www.conf
+         owner: root
+         group: root
+         mode: u=rw,g=r,o=r
+  notify: Restart php-fpm service
+
+
+- name: Copy generate /etc/nginx/nginx.conf
+  template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+
+
+##########################################################
+##      Copy TEST -- php.info--
+#########################################################
+
+#- name: Copy /usr/share/nginx/html/info.php
+#  copy:
+#         src: info.php
+#         dest: /usr/share/nginx/html/info.php
+#         owner: nginx
+#         group: nginx
+#         mode: u=rw,g=r,o=r
+##########################################################
+###########################################################
+
+- name: Copy /etc/ssl/certs/dhparam.pem
+  copy:
+         src: dhparam.pem
+         dest: /etc/ssl/certs/dhparam.pem
+         owner: root
+         group: root
+         mode: u=rw,g=r,o=r
+
+
+- name: Copy /etc/pki/tls/certs/nginx-selfsigned.crt
+  copy:
+         src: nginx-selfsigned.crt
+         dest: /etc/pki/tls/certs/nginx-selfsigned.crt
+         owner: root
+         group: root
+         mode: u=rw,g=r,o=r
+
+
+- name: Create directory /etc/ssl/private/
+  file:
+         path: /etc/ssl/private/
+         state: directory
+         owner: root
+         group: root
+         mode: u=rw,g=r,o=r
+
+
+- name: Copy /etc/ssl/private/nginx-selfsigned.key 
+  copy:
+         src: nginx-selfsigned.key
+         dest: /etc/ssl/private/nginx-selfsigned.key
+         owner: root
+         group: root
+         mode: u=rw,g=r,o=r
+
+
+- name: Copy /etc/nginx/default.d/ssl-redirect.conf HTTP>>HTTPS
+  copy:
+         src: ssl-redirect.conf
+         dest: /etc/nginx/default.d/ssl-redirect.conf
+         owner: root
+         group: root
+         mode: u=rw,g=r,o=r
+
+
+- name: Copy /etc/nginx/conf.d/wordpress.conf
+  template:
+         src: wordpress.conf.j2
+         dest: /etc/nginx/conf.d/wordpress.conf
+         owner: nginx
+         group: nginx
+         mode: u=rw,g=rw,o=r
+
+
+- name: Copy /etc/nginx/conf.d/joomla.conf
+  template:
+         src: joomla.conf.j2
+         dest: /etc/nginx/conf.d/joomla.conf
+         owner: nginx
+         group: nginx
+         mode: u=rw,g=rw,o=r
+
+
+- name: Copy start html page
+  template:
+         src: index.html.j2
+         dest: /usr/share/nginx/html/index.html
+         owner: nginx
+         group: nginx
+         mode: u=rw,g=rw,o=r
+  notify: Restart nginx service
+
+
+
+
+
+
+
+

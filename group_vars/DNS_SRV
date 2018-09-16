@@ -1,0 +1,75 @@
+---
+
+# DNS named.conf.j2
+dns_name_zone: space.net
+dns_filename_zone: space.net.zone
+dns_ip_network: 10.7.0.0/16
+
+# default_zone.j2
+dns_nameserver_1: ns1.space.net.
+dns_nameserver_2: ns2.space.net.
+dns_adminzone_mail: admin.gmail.com.
+dns_ip_nameserver_1: 10.7.180.133
+dns_ip_nameserver_2: 10.7.180.133
+
+dns_ip_recordname_www: 10.7.180.133
+
+dns_recordname_1: wordpress.space.net.
+dns_ip_recordname_1: 10.7.180.133
+dns_recordname_1_cname: wp.space.net.
+
+dns_recordname_4: joomla.space.net.
+dns_ip_recordname_4: 10.7.180.133
+dns_recordname_4_cname: j.space.net.
+
+dns_recordname_2: dns1
+dns_ip_recordname_2: 10.7.180.133
+dns_recordname_3: ntp
+dns_ip_recordname_3: 10.7.180.133
+
+dns_recordname_5: srv1
+dns_ip_recordname_5: 10.7.180.142
+dns_recordname_6: srv2
+dns_ip_recordname_6: 10.7.180.143
+
+
+# /etc/haproxy/haproxy.cfg
+hap_log_srv: 127.0.0.1
+hap_dashboard_port: 9000
+hap_dashboard_mode: http
+hap_dashboard_user: khoeiws3q
+hap_dashboard_passwd: hYsWfPs94g3Q
+
+hap_status_stat_page: enable
+hap_stats_uri: /haproxy_stats
+
+hap_site: space.net
+hap_site_1: wp.space.net
+hap_site_2: joomla.space.net
+hap_site_http_port: 80
+hap_site_https_port: 443
+hap_site_1_balance_mode: roundrobin
+hap_site_2_balance_mode: roundrobin
+
+hap_https_port_srv_1: 443
+hap_https_port_srv_2: 443
+hap_http_port_srv_1: 80
+hap_http_port_srv_2: 80
+
+
+# syslog haproxy  /etc/rsyslog.d/haproxy.conf
+hap_main_log: /var/log/haproxy.log
+hap_info_log: /var/log/haproxy-info.log
+hap_notice_log: /var/log/haproxy-allbutinfo.log
+
+
+# Generate iptables_cfg.sh
+iptables_eth: enp0s3
+iptables_ssh_port: 22
+iptables_dns_port: 53
+iptables_named_port: 953
+iptables_ntp_port: 123
+iptables_rsyslog_port: 514
+
+
+

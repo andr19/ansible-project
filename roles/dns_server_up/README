@@ -1,0 +1,18 @@
+Install and configure DNS servers
+	Waiting for my servers will come up online
+	Install BIND ['bind', 'bind-utils']
+	Generate named.conf
+	Generate ZONE space.net
+	Enable named
+	restart named
+
+
+/root/ansible-project/roles/
+						dns_server_up/
+									handlers/
+										main.yml
+									tasks/
+										main.yml
+									templates/
+										default_zone.j2
+										named.conf.j2

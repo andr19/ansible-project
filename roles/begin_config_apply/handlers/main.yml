@@ -1,0 +1,9 @@
+---
+# handlers file for basic.setup
+
+- name: Restart Operation System
+  shell: sleep 5 && reboot now
+  async: 1
+  poll: 0
+
+

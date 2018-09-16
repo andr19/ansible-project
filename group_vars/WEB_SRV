@@ -1,0 +1,44 @@
+---
+
+# Configure ntp.conf.client.j2
+ntp_pool_srv_update_1: 	     ntp.space.net
+ntp_pool_srv_update_2:       1.pool.ntp.org
+ntp_pool_srv_update_3:       2.pool.ntp.org
+ntp_pool_srv_update_4:       3.pool.ntp.org
+
+# Sitename
+nginx_sitename:              space.net
+nginx_sitename_subdomain_1:  wordpress.space.net
+nginx_sitename_subdomain_2:  wp.space.net
+nginx_sitename_subdomain_4:  joomla.space.net
+nginx_sitename_subdomain_5:  j.space.net
+
+# Configure wp-config.php.j2 //Wordpress
+wp_DB_NAME: wordpress_db
+wp_DB_USER: wp_user
+wp_DB_PASSWORD: wp_passwd_fk9quv
+wp_DB_HOST: localhost
+wp_DB_CHARSET: utf8
+wp_DB_COLLATE: utf8_unicode_ci
+
+# Configure configuration.php //Joomla
+j_DB_NAME: joomla_db
+j_DB_USER: joomla_user
+j_DB_PASSWORD: joomla_passwd_kr3qTuv
+j_DB_HOST: localhost
+j_DB_CHARSET: utf8
+j_DB_COLLATE: utf8_unicode_ci
+
+# Configure sql_cfg.sh.j2
+mariadb_passwd:	Qw1jf45ns
+
+
+# Generate  iptables_web.sh
+iptables_eth: enp0s3
+iptables_ssh_port: 22
+iptables_http_port: 80
+iptables_https_port: 443
+iptables_mariadb_port: 3306
+iptables_dns_port: 53
+iptables_ntp_port: 123
+

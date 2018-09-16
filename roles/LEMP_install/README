@@ -1,0 +1,15 @@
+Install LEMP for WEB-servers
+	Install LEMP ( Linux | "e"Nginx | Mariadb | Php )
+		['nginx', 'mariadb-server', 'mariadb', 'php', 'php-mysql', 'php-fpm'])
+	Enable nginx
+	Start nginx
+	Enable mariadb
+	Start mariadb
+	Enable php-fpm
+	Start php-fpm
+
+	
+/root/ansible-project/roles/
+						LEMP_install/
+									tasks/
+										main.yml

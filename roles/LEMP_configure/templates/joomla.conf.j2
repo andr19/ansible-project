@@ -1,0 +1,57 @@
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+
+    server {
+        listen       443;
+#        listen       [::]:80 default_server;
+        server_name  {{ nginx_sitename_subdomain_4 }};
+        server_name  {{ nginx_sitename_subdomain_5 }};
+        root         /usr/share/nginx/{{ nginx_sitename_subdomain_4 }};
+
+        # Load configuration files for the default server block.
+
+	index index.php index.html index.htm;
+	
+	ssl on;
+
+        ssl_dhparam "/etc/ssl/certs/dhparam.pem";
+        ssl_certificate "/etc/pki/tls/certs/nginx-selfsigned.crt";
+        ssl_certificate_key "/etc/ssl/private/nginx-selfsigned.key";
+
+
+
+        
+	location / {
+        }
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+
+	location ~ \.php$ {
+	        try_files $uri =404;
+        	fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+        	fastcgi_index index.php;
+        	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+       	 	include fastcgi_params;
+	}
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+

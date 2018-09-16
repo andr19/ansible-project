@@ -1,0 +1,38 @@
+---
+# tasks file for dns_server_up
+
+# Waiting to restart servers
+- name: Waiting for my servers will come up online
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    state: started
+    delay: 5
+    timeout: 100
+  delegate_to: 127.0.0.1
+
+- name: Install BIND
+  become: True
+  yum: name={{ item }} state=installed update_cache=yes
+  with_items:
+     - bind
+     - bind-utils
+   
+- name: Generate named.conf
+  template:
+    src: named.conf.j2
+    dest: /etc/named.conf
+
+- name: Generate ZONE {{ dns_name_zone }}
+  template:
+    src: default_zone.j2
+    dest: /var/named/{{ dns_filename_zone }}
+  notify: restart named
+
+- name: Enable named
+  service:
+        name: named
+        enabled: yes
+
+
+
+  

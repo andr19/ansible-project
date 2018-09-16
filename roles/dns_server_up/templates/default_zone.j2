@@ -1,0 +1,40 @@
+$TTL 86400
+@   IN  SOA   {{ dns_nameserver_1 }}  {{ dns_adminzone_mail }} (
+2018082511  ;Serial
+900        ;Refresh
+900        ;Retry
+1800      ;Expire
+600       ;Minimum TTL
+)
+
+;Name Server Information
+@     		 		 IN  NS      {{ dns_nameserver_1 }}
+@     		 		 IN  NS      {{ dns_nameserver_2 }}
+
+;IP address of Name Server
+{{ dns_nameserver_1 }}		 IN  A       {{ dns_ip_nameserver_1 }}
+{{ dns_nameserver_2 }}		 IN  A       {{ dns_ip_nameserver_2 }}
+
+;A - Record HostName To Ip Address
+www    		 		 IN  A       {{ dns_ip_recordname_www }}	
+@	   	 		 IN  A       {{ dns_ip_recordname_www }}
+
+; wordpress
+{{ dns_recordname_1 }}   	 IN  A       {{ dns_ip_recordname_1 }}
+{{ dns_recordname_1_cname }}	 IN  CNAME   {{ dns_recordname_1 }}
+
+
+; joomla
+{{ dns_recordname_4 }}   	 IN  A       {{ dns_ip_recordname_4 }}
+{{ dns_recordname_4_cname }}	 IN  CNAME   {{ dns_recordname_4 }}
+
+
+; dns1 + ntp
+{{ dns_recordname_2 }}	   	 IN  A       {{ dns_ip_recordname_2 }}
+{{ dns_recordname_3 }}	   	 IN  A       {{ dns_ip_recordname_3 }} 
+
+
+; srv1 + srv2
+{{ dns_recordname_5 }}	   	 IN  A       {{ dns_ip_recordname_5 }}
+{{ dns_recordname_6 }}	   	 IN  A       {{ dns_ip_recordname_6 }} 
+

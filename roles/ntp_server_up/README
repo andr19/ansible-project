@@ -1,0 +1,10 @@
+Install ntp for ALL servers
+	Install ntp
+	Start ntpd
+	Enable Ntpd
+	
+	
+/root/ansible-project/roles/
+						ntp_server_up/
+									tasks/
+										main.yml

@@ -1,0 +1,10 @@
+---
+
+# DNS resolv.conf.j2
+ip_nameserver_resolv: 10.7.180.133
+
+
+# Configure SElinux
+selinux_conf: /etc/selinux/config
+selinux_policy: targeted
+selinux_state: disabled

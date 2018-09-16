@@ -1,0 +1,21 @@
+Install and configure HAPROXY //high availability and load balancing] 
+	Install haproxy
+	Generate /etc/haproxy/haproxy.cfg
+	Configure haproxy syslog
+	Copy rsyslog.conf to /etc/rsyslog.conf
+	Restart haproxy
+	Enable haproxy
+	restart rsyslog
+
+
+/root/ansible-project/roles/
+						haproxy_up_and_configure/
+									handlers/
+										main.yml
+									tasks/
+										main.yml
+									templates/
+										haproxy.cfg.j2
+										rsyslog.d.haproxy.conf.j2
+									files/
+										rsyslog.conf

@@ -1,0 +1,77 @@
+#!/usr/bin/bash
+
+# clean all rules
+iptables -F
+iptables -F -t nat
+iptables -F -t mangle
+iptables -X
+iptables -t nat -X
+iptables -t mangle -X
+
+# allow localhost
+iptables -A INPUT -i lo	-j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+
+# allow ping
+iptables -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type destination-unreachable -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type time-exceeded -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+
+
+# allow output srv
+iptables -A OUTPUT -o {{ iptables_eth }} -j ACCEPT
+
+# allow ESTABLISHED,RELATED connections
+iptables -A INPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -p all -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# DROP invalid packages
+iptables -A INPUT -m state --state INVALID -j DROP
+iptables -A FORWARD -m state --state INVALID -j DROP
+
+# DROP zero packages
+iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+
+# DROP syn-flood 
+iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
+iptables -A OUTPUT -p tcp ! --syn -m state --state NEW -j DROP
+
+# open ports TCP
+iptables -A INPUT -i {{ iptables_eth }} -p tcp --dport {{ iptables_ssh_port }} -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport {{ hap_site_http_port }} -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport {{ hap_site_https_port }} -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport {{ iptables_named_port }} -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport {{ hap_dashboard_port }} -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport {{ iptables_dns_port }} -j ACCEPT
+
+# open ports UDP
+iptables -A INPUT -i {{ iptables_eth }} -p udp --dport  {{ iptables_dns_port }}  -j ACCEPT
+iptables -A INPUT -i {{ iptables_eth }} -p udp --dport {{ iptables_ntp_port }} -j ACCEPT
+iptables -A INPUT -i {{ iptables_eth }} -p udp --dport {{ iptables_rsyslog_port }} -j ACCEPT
+
+
+# DROP other
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+
+
+# Enable Log
+iptables -N block_in
+iptables -N block_out
+iptables -N block_fw
+
+iptables -A INPUT -j block_in
+iptables -A OUTPUT -j block_out
+iptables -A FORWARD -j block_fw
+
+iptables -A block_in -j LOG --log-level info --log-prefix "--IN--BLOCK"
+iptables -A block_in -j DROP
+iptables -A block_out -j LOG --log-level info --log-prefix "--OUT--BLOCK"
+iptables -A block_out -j DROP
+iptables -A block_fw -j LOG --log-level info --log-prefix "--FW--BLOCK"
+iptables -A block_fw -j DROP
+
+service iptables save

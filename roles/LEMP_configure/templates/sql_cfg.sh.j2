@@ -1,0 +1,11 @@
+#!/bin/bash
+mysql -u root -p{{ mariadb_passwd }}<<EOF
+CREATE DATABASE {{ wp_DB_NAME }}  DEFAULT CHARACTER SET {{ wp_DB_CHARSET }} COLLATE {{ wp_DB_COLLATE }};
+CREATE USER '{{ wp_DB_USER }}'@'{{ wp_DB_HOST }}'  IDENTIFIED BY '{{ wp_DB_PASSWORD }}';
+GRANT ALL ON {{ wp_DB_NAME }}.* TO  '{{ wp_DB_USER }}'@'{{ wp_DB_HOST }}';
+CREATE DATABASE {{ j_DB_NAME }}  DEFAULT CHARACTER SET {{ j_DB_CHARSET }} COLLATE {{ j_DB_COLLATE }};
+CREATE USER '{{ j_DB_USER }}'@'{{ j_DB_HOST }}'  IDENTIFIED BY '{{ j_DB_PASSWORD }}';
+GRANT ALL ON {{ j_DB_NAME }}.* TO  '{{ j_DB_USER }}'@'{{ j_DB_HOST }}';
+FLUSH PRIVILEGES;
+exit
+EOF

@@ -1,0 +1,16 @@
+[WEB_SRV]
+web-srv-1 	ansible_host=10.7.180.142 	
+web-srv-2	ansible_host=10.7.180.143	
+
+[DNS_SRV]
+dns-srv-1	ansible_host=10.7.180.133	
+
+[NTP_SRV]
+ntp-srv-1	ansible_host=10.7.180.133
+
+
+[ALL_SRV:children]
+WEB_SRV
+DNS_SRV
+
+

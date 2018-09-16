@@ -1,0 +1,164 @@
+---
+- name: Start basic setup Disable Selinux | firewalld | NetworkManager | set timezone | Upgrade all packages | Install basic software | change hostname | REBOOT OS
+  hosts: ALL_SRV
+  become: True  
+  roles: 
+    - { role: begin_config_apply, when: ansible_distribution == 'CentOS' } 
+
+
+
+- name: Install and configure DNS servers
+  hosts: DNS_SRV
+  become: True
+  roles:  
+    - { role: dns_server_up, when: ansible_distribution == 'CentOS' }
+
+
+
+- name: Change resolv.conf for ALL
+  hosts: ALL_SRV
+  become: True  
+  tasks:
+    - name: Change resolv.conf for ALL_SRV
+      template:
+        src: resolv.conf.j2
+        dest: /etc/resolv.conf
+      notify: restart network
+
+
+  handlers: 
+    - name: restart network
+      service:
+        name: network
+        state: restarted
+
+
+
+- name: Install ntp for ALL servers
+  hosts: ALL_SRV
+  become: True
+  roles:  
+    - { role: ntp_server_up, when: ansible_distribution == 'CentOS' } 
+
+
+
+- name: Change ntp.conf for NTP servers
+  hosts: NTP_SRV
+  become: True  
+  tasks:
+    - name: Change ntp.conf for NTP_SRV
+      template:
+        src: ntp.conf.srv.j2
+        dest: /etc/ntp.conf
+      notify: restart ntpd
+
+
+  handlers: 
+    - name: restart ntpd
+      service:
+        name: ntpd
+        state: restarted
+
+
+
+- name: Change ntp.conf for WEB-servers
+  hosts: WEB_SRV
+  become: True  
+  tasks:
+    - name: Change ntp.conf for WEB_SRV
+      template:
+        src: ntp.conf.client.j2
+        dest: /etc/ntp.conf
+      notify: restart ntpd
+
+
+  handlers: 
+    - name: restart ntpd
+      service:
+        name: ntpd
+        state: restarted
+
+
+
+- name: Install LEMP for WEB-servers
+  hosts: WEB_SRV
+  become: True
+  roles:  
+    - { role: LEMP_install, when: ansible_distribution == 'CentOS' } 
+
+
+
+- name: Configure LEMP+wp+joomla for WEB-servers
+  hosts: WEB_SRV
+  become: True
+  roles:  
+    - { role: LEMP_configure, when: ansible_distribution  == 'CentOS' } 
+
+
+
+- name: Install and configure HAPROXY //high availability and load balancing
+  hosts: DNS_SRV
+  become: True
+  roles:  
+    - { role: haproxy_up_and_configure, when: ansible_distribution == 'CentOS' }
+
+
+
+- name: Generate iptables_cfg.sh for DNS_SRV
+  hosts: DNS_SRV
+  become: True
+  tasks:
+    - name: generate iptables.sh
+      template:
+        src: iptables_hap.sh.j2
+        dest: /etc/iptables_cfg.sh
+        owner: root
+        group: root
+        mode: 0740
+
+
+- name: Generate iptables_cfg.sh for WEB_SRV
+  hosts: WEB_SRV
+  become: True
+  tasks:
+    - name: generate iptables.sh
+      template:
+        src: iptables_web.sh.j2
+        dest: /etc/iptables_cfg.sh
+        owner: root
+        group: root
+        mode: 0740
+
+
+- name: Run shell script to apply iptables config for ALL_SRV /enable and restart iptables /delete temp files
+  hosts: ALL_SRV
+  become: True
+  tasks:
+    - name: Enable iptables
+      service:
+        name: iptables
+        enabled: yes
+
+    - name: Run shell script to apply iptables config for ALL_SRV 
+      shell: /etc/iptables_cfg.sh
+
+    - name: restart iptables
+      service:
+        name: iptables
+        state: restarted
+    
+    - name: Delete temp iptables files for ALL_SRV
+      file:
+        path: /etc/iptables_cfg.sh
+        state: absent
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,171 @@
+Script for installation and configuration LEMP+wordpress+joomla+haproxy for CENTOS 7
+############################################################################################
+############################################################################################
+Scripts run from the following folder	
+						"/root/ansible-project/"
+
+The command to run the script 	 
+						"ansible-playbook start.yml"
+
+############################################################################################
+############################################################################################
+ 1. Basic configure 
+ 2. DNS configure
+ 3. NTP configure
+ 4. Install and configure LEMP+wordpress+joomla
+ 5. Haproxy configure
+ 6. Iptables configure
+  
+############################################################################################
+############################################################################################
+############################################################################################
+############################################################################################  
+1.  Basic setup
+		Disable  Selinux
+		Disable firewalld 
+		Disable NetworkManager
+		Set timezone
+		Upgrade all packages
+		Install basic software
+			vim, mc, net-tools, bind-utils, epel-release, tree, wget, unzip, iptables-services
+		Change hostname 
+		REBOOT OS
+2. Install and configure DNS servers
+		Waiting for my servers will come up online
+		Install BIND
+			bind, bind-utils
+		Generate named.conf
+		Generate ZONE space.net
+		Enable named
+		restart named
+		Change resolv.conf for ALL
+		restart network
+3. Install ntp for ALL servers
+		Install ntp
+		Start ntpd
+		Enable Ntpd
+		Change ntp.conf for NTP servers
+		restart ntpd
+		Change ntp.conf for WEB-servers
+		restart ntpd
+4. Install and configure LEMP+wp+joomla for WEB-servers
+	 Install LEMP ( Linux | "e"Nginx | Mariadb | Php )
+		nginx, mariadb-server, mariadb, php, php-mysql, php-fpm
+		Enable nginx
+		Start nginx
+		Enable mariadb
+		Start mariadb
+		Enable php-fpm
+		Start php-fpm
+	 Configure LEMP+wp+joomla for WEB-servers
+		Copy wordpress.default.site.zip to WEB-SRV
+		Unarchive wordpress files
+		Copy joomla.default.site.zip to WEB-SRV
+		Unarchive joomla files
+		Delete temp file wp
+		Delete temp file joomla
+		Copy wp-config.php.j2
+		Copy generate script to mariaDB secure install
+		Run script to mariaDB secure install
+		Run script to mariaDB secure install
+		Copy generate script to configure mariaDB
+		Run script to create database and user_db
+		Delete mariadb_sec_install.sh
+		Delete sql_cfg.sh
+		Copy /etc/php.ini
+		Copy /etc/php-fpm.d/www.conf
+		Copy generate /etc/nginx/nginx.conf
+		Copy /etc/ssl/certs/dhparam.pem
+		Copy /etc/pki/tls/certs/nginx-selfsigned.crt
+		Create directory /etc/ssl/private/
+		Copy /etc/ssl/private/nginx-selfsigned.key
+		Copy /etc/nginx/default.d/ssl-redirect.conf HTTP>>HTTPS
+		Copy /etc/nginx/conf.d/wordpress.conf
+		Copy /etc/nginx/conf.d/joomla.conf
+		Copy start html page
+		Restart mariaDB service
+		Restart php-fpm service
+		Restart nginx service
+5. Install and configure HAPROXY //high availability and load balancing
+		Install haproxy
+		Generate /etc/haproxy/haproxy.cfg
+		Configure haproxy syslog
+		Copy rsyslog.conf to /etc/rsyslog.conf
+		Restart haproxy
+		Enable haproxy
+		restart rsyslog	
+6. Configure IPTABLES
+		Generate iptables_cfg.sh for DNS_SRV
+		Generate iptables_cfg.sh for WEB_SRV
+		Run shell script to apply iptables config for ALL_SRV
+		Enable iptables
+		restart iptables
+		Delete temp iptables files for ALL_SRV
+		
+
+############################################################################################
+
+--- STRUCTURE OF SCRIPT FILES ---
+
+/root/ansible-project/
+				ansible.cfg
+				hosts
+				start.yml
+				group_vars/
+					ALL_SRV
+					DNS_SRV
+					NTP_SRV
+					WEB_SRV
+				host_vars/
+					dns-srv-1
+					web-srv-1
+					web-srv-2
+				templates/
+					iptables_hap.sh.j2
+					iptables_web.sh.j2
+					ntp.conf.client.j2
+					ntp.conf.srv.j2
+					resolv.conf.j2
+				roles/
+					begin_config_apply/
+									handlers/
+										main.yml
+									tasks/
+										main.yml
+					dns_server_up/
+									handlers/
+										main.yml
+									tasks/
+										main.yml
+									templates/
+										default_zone.j2
+										named.conf.j2					
+					ntp_server_up/
+									tasks/
+										main.yml
+					LEMP_install/
+									tasks/
+										main.yml
+					LEMP_configure/
+									handlers/
+										main.yml
+									tasks/
+										main.yml
+									templates/
+										index.html.j2
+										joomla.conf.j2
+										mariadb_sec_install.sh.j2
+										nginx.conf.j2
+										sql_cfg.sh.j2
+										wordpress.conf.j2
+										wp-config.php.j2
+									files/
+										dhparam.pem
+										info.php
+										joomla.default.site.zip
+										nginx-selfsigned.crt
+										nginx-selfsigned.key
+										php.ini
+										ssl-redirect.conf
+										wordpress.default.site.zip
+										www.conf

@@ -1,0 +1,54 @@
+Configure LEMP+wp+joomla for WEB-servers
+	Copy wordpress.default.site.zip to WEB-SRV
+	Unarchive wordpress files
+	Copy joomla.default.site.zip to WEB-SRV
+	Unarchive joomla files
+	Delete temp file wp
+	Delete temp file joomla
+	Copy wp-config.php.j2
+	Copy generate script to mariaDB secure install
+	Run script to mariaDB secure install
+	Copy generate script to configure mariaDB
+	Run script to create database and user_db
+	Delete mariadb_sec_install.sh
+	Delete sql_cfg.sh
+	Copy /etc/php.ini
+	Copy /etc/php-fpm.d/www.conf
+	Copy generate /etc/nginx/nginx.conf
+	Copy /etc/ssl/certs/dhparam.pem
+	Copy /etc/pki/tls/certs/nginx-selfsigned.crt
+	Create directory /etc/ssl/private/
+	Copy /etc/ssl/private/nginx-selfsigned.key
+	Copy /etc/nginx/default.d/ssl-redirect.conf HTTP>>HTTPS
+	Copy /etc/nginx/conf.d/wordpress.conf
+	Copy /etc/nginx/conf.d/joomla.conf
+	Copy start html page
+	Restart mariaDB service
+	Restart php-fpm service
+	Restart nginx service
+	
+	
+/root/ansible-project/roles/
+						LEMP_configure/
+									handlers/
+										main.yml
+									tasks/
+										main.yml
+									templates/
+										index.html.j2
+										joomla.conf.j2
+										mariadb_sec_install.sh.j2
+										nginx.conf.j2
+										sql_cfg.sh.j2
+										wordpress.conf.j2
+										wp-config.php.j2
+									files/
+										dhparam.pem
+										info.php
+										joomla.default.site.zip
+										nginx-selfsigned.crt
+										nginx-selfsigned.key
+										php.ini
+										ssl-redirect.conf
+										wordpress.default.site.zip
+										www.conf

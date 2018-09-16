@@ -1,0 +1,49 @@
+---
+# tasks file for LEMP_install
+
+- name: Install LEMP ( Linux | "e"Nginx | Mariadb | Php )
+  yum: name={{ item }} state=installed update_cache=yes
+  with_items:
+     - nginx
+     - mariadb-server
+     - mariadb
+     - php
+     - php-mysql
+     - php-fpm
+
+
+
+- name: Enable nginx
+  service:
+        name: nginx
+        enabled: yes
+
+- name: Start nginx
+  service:
+        name: nginx
+        state: started
+
+
+- name: Enable mariadb
+  service:
+        name: mariadb
+        enabled: yes
+
+- name: Start mariadb
+  service:
+        name: mariadb
+        state: started
+
+
+- name: Enable php-fpm
+  service:
+        name: php-fpm
+        enabled: yes
+
+- name: Start php-fpm
+  service:
+        name: php-fpm
+        state: started
+
+
+

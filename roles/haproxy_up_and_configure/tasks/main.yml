@@ -1,0 +1,38 @@
+---
+# tasks file for haproxy_up_and_configure
+
+- name: Install haproxy
+  become: True
+  yum: name=haproxy state=installed update_cache=yes
+
+  
+- name: Generate /etc/haproxy/haproxy.cfg
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+
+
+- name: Configure haproxy syslog
+  template:
+    src: rsyslog.d.haproxy.conf.j2
+    dest: /etc/rsyslog.d/haproxy.conf
+
+  
+- name: Copy rsyslog.conf to /etc/rsyslog.conf
+  copy:
+    src: rsyslog.conf
+    dest: /etc/
+  notify: restart rsyslog
+
+
+- name: Restart haproxy
+  service:
+    name: haproxy
+    state: restarted
+
+
+- name: Enable haproxy
+  service:
+    name: haproxy
+    enabled: yes
+

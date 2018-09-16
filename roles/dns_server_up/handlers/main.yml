@@ -1,0 +1,9 @@
+---
+# handlers file for dns_server_up
+
+- name: restart named
+  service:
+        name: named
+        state: restarted
+
+

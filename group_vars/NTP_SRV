@@ -1,0 +1,11 @@
+---
+
+# Configure ntp.conf.srv.j2 
+ntp_pool_srv_update_1: 0.pool.ntp.org
+ntp_pool_srv_update_2: 1.pool.ntp.org
+ntp_pool_srv_update_3: 2.pool.ntp.org
+ntp_pool_srv_update_4: 3.pool.ntp.org
+
+ntp_local_netw: 10.7.0.0
+ntp_local_netw_mask: 255.255.0.0
+
